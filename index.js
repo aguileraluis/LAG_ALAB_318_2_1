@@ -1,18 +1,40 @@
 const express = require("express"); 
+const hbs = require("express-handlebars")
 
-const app = express(); 
+const app = express();
 
-app.set("view engine", "ejs"); 
+app.engine('handlebars', hbs.engine({defaultLayout: 'main'}));
+app.set("view engine", "handlebars"); 
+app.set("views", "./views"); 
 
+app.use(express.urlencoded({ extended: false }))
 app.use(express.static("img")); 
 
-app.get("/", (req, res) => {
+const todos = [
+  "clean office", 
+  "finish app"
+]
+
+app.get("/home", (req, res) => {
   res.render("home"); 
+})
+
+app.get("/", (req, res) => {
+  res.render("homePage", {
+    todos
+  }); 
 }); 
+
+app.post('/todo', (req, res) => {
+  todos.push(req.body.content)
+  res.redirect('/')
+})
 
 app.get("/download", (req, res) => {
   res.download("./img/activist.jpg"); 
 }); 
+
+
 
 
 
